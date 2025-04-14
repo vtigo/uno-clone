@@ -1,15 +1,15 @@
 # UNO Clone Development Todo List
 
 ## Project Setup
-- [ ] Create project directory structure
-- [ ] Initialize Go module (`go mod init`)
+- [X] Create project directory structure
+- [X] Initialize Go module (`go mod init`)
 - [ ] Add required dependencies
   - [ ] Ebiten v2
   - [ ] Audio packages
   - [ ] Gorilla WebSocket
   - [ ] Font packages
 - [ ] Create basic README file
-- [ ] Set up version control (git)
+- [X] Set up version control (git)
 
 ## Core Game Logic
 - [ ] Implement card representation (structs and constants)
