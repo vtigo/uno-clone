@@ -1,0 +1,192 @@
+# UNO Clone Development Todo List
+
+## Project Setup
+- [ ] Create project directory structure
+- [ ] Initialize Go module (`go mod init`)
+- [ ] Add required dependencies
+  - [ ] Ebiten v2
+  - [ ] Audio packages
+  - [ ] Gorilla WebSocket
+  - [ ] Font packages
+- [ ] Create basic README file
+- [ ] Set up version control (git)
+
+## Core Game Logic
+- [ ] Implement card representation (structs and constants)
+- [ ] Create deck management
+  - [ ] Card creation functions
+  - [ ] Shuffle functionality
+  - [ ] Draw card functionality
+- [ ] Implement player representation
+  - [ ] Player struct with name and hand
+  - [ ] Add/remove card functionality
+- [ ] Create game rules engine
+  - [ ] Card validation logic
+  - [ ] Special card effects
+    - [ ] Skip implementation
+    - [ ] Reverse implementation (acts as Skip in 2-player)
+    - [ ] Draw Two implementation
+    - [ ] Wild card implementation
+    - [ ] Wild Draw Four implementation
+  - [ ] Turn management
+  - [ ] UNO call handling
+  - [ ] Win condition checking
+- [ ] Implement game state management
+  - [ ] State machine for different screens
+  - [ ] Game initialization
+  - [ ] Game progression
+  - [ ] Game end handling
+
+## Asset Creation and Management
+- [ ] Create pixel art assets
+  - [ ] Card designs for all card types and colors
+    - [ ] Red number cards (0-9)
+    - [ ] Blue number cards (0-9)
+    - [ ] Green number cards (0-9)
+    - [ ] Yellow number cards (0-9)
+    - [ ] Skip cards (all colors)
+    - [ ] Reverse cards (all colors)
+    - [ ] Draw Two cards (all colors)
+    - [ ] Wild cards
+    - [ ] Wild Draw Four cards
+  - [ ] Card back design
+  - [ ] UI elements
+    - [ ] Buttons
+    - [ ] Text boxes
+    - [ ] Color wheel
+    - [ ] Background designs
+- [ ] Create sound effects
+  - [ ] Card play sound
+  - [ ] Card draw sound
+  - [ ] "UNO" call sound
+  - [ ] Win celebration sound
+  - [ ] Special card sounds
+  - [ ] Invalid move sound
+  - [ ] Background music
+- [ ] Implement asset loading system
+  - [ ] Image loading
+  - [ ] Sound loading
+
+## User Interface
+- [ ] Implement title screen
+  - [ ] Create layout
+  - [ ] Add title graphics
+  - [ ] Implement navigation buttons
+    - [ ] Play Game
+    - [ ] Rules
+    - [ ] Settings
+    - [ ] Exit
+- [ ] Implement rules screen
+  - [ ] Display two-player UNO rules
+  - [ ] Add back button
+- [ ] Implement settings screen
+  - [ ] Sound effects toggle
+  - [ ] Full screen toggle
+  - [ ] Player name customization
+  - [ ] Back button
+- [ ] Implement gameplay screen
+  - [ ] Player hand display
+  - [ ] Draw pile visualization
+  - [ ] Discard pile visualization
+  - [ ] Current player indicator
+  - [ ] UNO button
+  - [ ] End Turn button
+  - [ ] Color wheel for Wild cards
+- [ ] Implement results screen
+  - [ ] Winner display
+  - [ ] Opponent's remaining cards
+  - [ ] Game time display
+  - [ ] Play Again button
+  - [ ] Back to Title button
+- [ ] Add transitions between screens
+- [ ] Implement input handling
+  - [ ] Mouse interactions
+  - [ ] Button clicks
+  - [ ] Card selection
+  - [ ] UI navigation
+
+## Networking
+- [ ] Implement WebSocket server
+  - [ ] Create connection handling
+  - [ ] Implement game state broadcasting
+  - [ ] Add message validation
+  - [ ] Implement action processing
+- [ ] Implement WebSocket client
+  - [ ] Create connection management
+  - [ ] Implement state synchronization
+  - [ ] Add message sending
+  - [ ] Implement action requests
+- [ ] Create LAN discovery system
+  - [ ] Server broadcasting
+  - [ ] Client discovery
+  - [ ] Game listing
+- [ ] Implement network protocol
+  - [ ] Define message types
+  - [ ] Create serialization functions
+  - [ ] Add deserialization functions
+- [ ] Add host/join game functionality
+  - [ ] Host game interface
+  - [ ] Join game interface
+  - [ ] Player matching
+- [ ] Implement disconnection handling
+  - [ ] Detect disconnections
+  - [ ] End game on disconnect
+  - [ ] Notify remaining player
+
+## Integration and Testing
+- [ ] Write unit tests
+  - [ ] Card validation tests
+  - [ ] Game state transition tests
+  - [ ] Special card effect tests
+  - [ ] Winning condition tests
+- [ ] Write integration tests
+  - [ ] Game state and UI tests
+  - [ ] Network communication tests
+  - [ ] Complete game flow tests
+- [ ] Perform manual testing
+  - [ ] UI responsiveness
+  - [ ] Visual elements
+  - [ ] Network performance
+  - [ ] Gameplay experience
+- [ ] Fix identified bugs
+- [ ] Optimize performance
+  - [ ] Rendering optimization
+  - [ ] Network optimization
+  - [ ] Asset loading optimization
+
+## Polishing
+- [ ] Refine UI elements
+  - [ ] Improve visual feedback
+  - [ ] Add animations
+  - [ ] Enhance visual styling
+- [ ] Optimize game flow
+  - [ ] Reduce waiting times
+  - [ ] Improve user experience
+- [ ] Add final sound effects
+- [ ] Final balancing and tweaking
+- [ ] Documentation
+  - [ ] Update README
+  - [ ] Add installation instructions
+  - [ ] Add game rules documentation
+  - [ ] Document code
+  - [ ] Create user guide
+
+## Deployment
+- [ ] Create build scripts
+- [ ] Generate executables for different platforms
+  - [ ] Windows
+  - [ ] macOS
+  - [ ] Linux
+- [ ] Test cross-platform functionality
+- [ ] Package assets with executables
+- [ ] Create installer (optional)
+
+## Post-Launch
+- [ ] Gather user feedback
+- [ ] Plan feature updates
+  - [ ] Additional customization options
+  - [ ] More player support
+  - [ ] AI opponents
+  - [ ] Different game modes
+- [ ] Maintain and update dependencies
+- [ ] Fix any reported bugs
