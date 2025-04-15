@@ -23,28 +23,58 @@
 - [X] Set up basic main.go with Ebiten game loop
 
 ### Card and Deck Implementation
-- [X] Define Card struct and related types in game/card.go:
+- [ ] Define Card struct and related types in game/card.go:
   - [X] CardColor enum (Red, Blue, Green, Yellow, Wild)
   - [X] CardType enum (Number, Skip, Reverse, DrawTwo, WildCard, WildDrawFour)
   - [X] Card struct with Color, Type, and Value fields
-- [X] Implement deck management functions:
-  - [X] CreateDeck function that generates all 108 cards
-  - [X] Shuffle function to randomize deck
-  - [X] DrawCard function to take cards from the deck
-- [X] Write unit tests for card and deck functionality
+  - [ ] Methods for card comparison and matching (according to UNO rules)
+  - [X] String/display formatting methods for cards
+- [ ] Implement standard UNO deck management:
+  - [X] CreateDeck function that generates all 108 cards with proper distribution:
+    - [X] 19 red cards (0-9, with duplicates of 1-9)
+    - [X] 19 blue cards (0-9, with duplicates of 1-9)
+    - [X] 19 green cards (0-9, with duplicates of 1-9)
+    - [X] 19 yellow cards (0-9, with duplicates of 1-9)
+    - [X] 8 Skip cards (2 of each color)
+    - [X] 8 Reverse cards (2 of each color)
+    - [X] 8 Draw Two cards (2 of each color)
+    - [X] 4 Wild cards
+    - [X] 4 Wild Draw Four cards
+  - [X] Shuffle function using Fisher-Yates algorithm
+  - [X] DrawCard function to take cards from the top of the deck
+  - [ ] Reshuffle function to reuse discarded cards when deck is empty
+- [ ] Write comprehensive unit tests:
+  - [X] Test card creation and properties
+  - [X] Test deck generation (correct number and distribution of cards)
+  - [X] Test shuffle randomness
+  - [X] Test draw functionality
+  - [ ] Test card matching rules
 
 ### Player Implementation
-- [X] Create Player struct in game/player.go:
+- [ ] Create Player struct in game/player.go:
   - [X] Name field (string)
   - [X] Hand field (slice of Card pointers)
-  - [X] Any additional player state fields
-- [X] Implement player methods:
+  - [X] HasCalledUno flag to track UNO calls
+  - [ ] IsConnected flag for network play status
+- [ ] Implement player methods:
   - [X] NewPlayer function to create player with name
   - [X] AddCard method to add cards to hand
   - [X] PlayCard method to remove/play cards from hand
   - [X] HasWon method to check for win condition (no cards)
   - [X] ShouldCallUno method to check if player has one card
-- [X] Write unit tests for player functionality
+  - [X] CallUno method to mark that player has called UNO
+  - [ ] GetPlayableCards method to find all valid plays
+  - [ ] CanPlayWildDrawFour method to validate Wild Draw Four plays
+- [ ] Implement hand management:
+  - [ ] Sort hand by color and number for easier play
+  - [ ] Track cards drawn this turn (for draw-and-play rule)
+  - [ ] Methods to find cards matching a specific color or value
+- [ ] Write unit tests for player functionality:
+  - [X] Test hand management
+  - [ ] Test valid play detection
+  - [X] Test UNO call status
+  - [X] Test win condition
+  - [ ] Test Wild Draw Four validation
 
 ### Game State Management
 - [ ] Create GameState struct in game/state.go:
@@ -52,47 +82,97 @@
   - [ ] CurrentScreen field to track current screen
   - [ ] Players array for both players
   - [ ] CurrentPlayer index to track active player
+  - [ ] CurrentColor field to track active color (may differ from top card after Wild)
   - [ ] Deck field for remaining cards
   - [ ] DiscardPile field for played cards
   - [ ] CurrentCard field for top card
-- [ ] Implement game state methods:
+  - [ ] GameStatus enum (NotStarted, InProgress, GameOver)
+  - [ ] DrawCount to track cards that need to be drawn (Draw Two/Four)
+  - [ ] WaitingForColorSelection flag
+  - [ ] CanPlayAfterDraw flag
+  - [ ] CanPlayAgain flag (for Skip/Reverse effects)
+  - [ ] GameStartTime and GameEndTime for timing
+- [ ] Implement game initialization:
   - [ ] NewGameState function to initialize game
   - [ ] InitGame method to set up a new game
-  - [ ] DealCards method to distribute initial hands
-  - [ ] NextTurn method for turn management
-  - [ ] ResetGame method to start over
-- [ ] Write unit tests for game state functionality
+  - [ ] DealCards method to distribute initial 7 cards per player
+  - [ ] SetupFirstCard method (ensure first card isn't a special card)
+- [ ] Implement turn management:
+  - [ ] StartTurn method to begin a player's turn
+  - [ ] NextTurn method for turn progression
+  - [ ] HandleCardPlay method for playing a card
+  - [ ] HandleDrawCard method for drawing a card
+  - [ ] HandleUnoCall method
+  - [ ] HandleColorSelection for Wild cards
+  - [ ] HandlePlayAgain for Skip/Reverse in two-player mode
+- [ ] Implement game progression:
+  - [ ] CheckGameOver method
+  - [ ] CalculateScore method
+  - [ ] ResetGame method for starting over
+  - [ ] SaveGameState and LoadGameState for persistence
+- [ ] Write unit tests for all game state functionality:
+  - [ ] Test initialization
+  - [ ] Test turn progression
+  - [ ] Test card effects specific to two-player rules
+  - [ ] Test UNO call handling
+  - [ ] Test game over conditions
 
 ## Phase 2: Game Logic and Rules
 
-### Card Validation and Rules
-- [ ] Create game/rules.go file:
-  - [ ] Implement IsValidPlay function to check if a card can be played
-  - [ ] Create HandleCardEffect function for special card effects
-- [ ] Implement special card effects:
-  - [ ] Skip card logic (current player plays again)
-  - [ ] Reverse card logic (acts as Skip in 2-player)
-  - [ ] Draw Two card logic
-  - [ ] Wild card logic with color selection
-  - [ ] Wild Draw Four card logic
-- [ ] Implement two-player specific rules:
-  - [ ] Reverse and Skip allow current player to play again
-  - [ ] Draw cards affect turn appropriately
-- [ ] Write unit tests for all validation and card effects
+### Two-Player UNO Rules Implementation
+- [ ] Implement core card matching rules:
+  - [ ] Cards must match by color, number, or action type
+  - [ ] Number cards (0-9) playable on matching color or number
+  - [ ] Action cards (Skip, Reverse, Draw Two) playable on matching color or action
+  - [ ] Wild cards can be played on any card
+  - [ ] Wild Draw Four only playable when player has no matching color in hand
+- [ ] Implement special two-player mechanics:
+  - [ ] Skip card: Current player plays again immediately
+  - [ ] Reverse card: Acts like Skip (current player plays again immediately)
+  - [ ] Draw Two card: Other player draws 2 cards, loses turn, play returns to first player
+  - [ ] Wild card: Player selects the new color, turn passes to opponent
+  - [ ] Wild Draw Four: Other player draws 4 cards, loses turn, first player selects color
+- [ ] Implement draw mechanics:
+  - [ ] If player cannot play, they must draw one card
+  - [ ] If drawn card is playable, player may play it immediately
+  - [ ] If drawn card cannot be played, turn passes to other player
+- [ ] Implement turn progression:
+  - [ ] Turns alternate between the two players
+  - [ ] Turn ends when a card is played (except for Skip/Reverse)
+  - [ ] Turn ends when a drawn card cannot be played
+- [ ] Implement UNO call rules:
+  - [ ] Player must call "UNO" when down to one card
+  - [ ] Penalty (draw two cards) if caught not calling "UNO"
+- [ ] Implement win condition:
+  - [ ] Game ends when a player has no cards left
+  - [ ] First player to discard all cards wins
 
 ### Game Flow Management
 - [ ] Implement turn sequence logic:
   - [ ] Start turn functionality
   - [ ] Play card validation and execution
   - [ ] Draw card functionality
+  - [ ] Handle post-draw playability check
+  - [ ] Handle special two-player turn sequences (Skip/Reverse)
   - [ ] End turn transitions
 - [ ] Add UNO call handling:
   - [ ] Track when players should call UNO
-  - [ ] Implement penalties for failing to call UNO
+  - [ ] Add button/mechanism for players to call UNO
+  - [ ] Implement detection for missed UNO calls
+  - [ ] Implement penalties for failing to call UNO (draw 2 cards)
+- [ ] Implement special game states:
+  - [ ] Color selection after Wild cards
+  - [ ] Multiple plays after Skip/Reverse
+  - [ ] Waiting for opponent to draw cards
 - [ ] Implement win condition checking:
   - [ ] Detect when a player has no cards left
   - [ ] Handle game end transitions
+  - [ ] Calculate final score based on opponent's remaining cards
 - [ ] Write integration tests for complete game flows
+  - [ ] Test standard card play sequences
+  - [ ] Test all special card effects in two-player context
+  - [ ] Test proper UNO call handling
+  - [ ] Test win conditions
 
 ## Phase 3: User Interface Foundation
 
@@ -149,15 +229,30 @@
 - [ ] Create CardRenderer struct in ui package:
   - [ ] Implement RenderCard method for front-facing cards
   - [ ] Create RenderCardBack method for face-down cards
-- [ ] Implement rendering for different card types:
-  - [ ] Number cards with color and value
-  - [ ] Skip cards with symbol
-  - [ ] Reverse cards with symbol
-  - [ ] Draw Two cards with symbol
-  - [ ] Wild cards with symbol
-  - [ ] Wild Draw Four cards with symbol
-- [ ] Add scaling and positioning options
-- [ ] Test card rendering for all card types
+  - [ ] Add methods for card animations (play, draw, shuffle)
+- [ ] Implement UNO card design standards:
+  - [ ] Number cards with proper color and centered number
+  - [ ] Skip cards with international "no" symbol
+  - [ ] Reverse cards with direction change arrows
+  - [ ] Draw Two cards with +2 symbol
+  - [ ] Wild cards with four-color quadrant design
+  - [ ] Wild Draw Four cards with four-color design and +4 symbol
+  - [ ] All cards should have the UNO logo/text on back design
+- [ ] Add card state visualization:
+  - [ ] Highlight effect for playable cards
+  - [ ] Selection indicator for chosen card
+  - [ ] Dimming effect for unplayable cards
+  - [ ] Special effect for "UNO" status (last card)
+- [ ] Implement layout options:
+  - [ ] Scaling for different screen sizes
+  - [ ] Positioning for hand, draw pile, and discard pile
+  - [ ] Card fanning for player's hand
+  - [ ] Stacking for draw pile
+- [ ] Test card rendering:
+  - [ ] Test all card types and colors
+  - [ ] Test different states (playable, selected, etc.)
+  - [ ] Test animations
+  - [ ] Test layout with different numbers of cards
 
 ### Hand and Game Elements
 - [ ] Implement player hand rendering:
@@ -176,17 +271,32 @@
 - [ ] Implement card selection:
   - [ ] Add click detection for cards in hand
   - [ ] Create visual feedback for selected cards
-  - [ ] Add validation against game rules
-- [ ] Implement game actions:
+  - [ ] Add validation against UNO rules
+  - [ ] Highlight playable cards in hand
+  - [ ] Show tooltip for why cards aren't playable
+- [ ] Implement standard game actions:
   - [ ] Draw card functionality
   - [ ] Play card execution
-  - [ ] UNO button functionality
+  - [ ] UNO button functionality (must be clicked when down to one card)
   - [ ] End Turn button actions
-- [ ] Add Wild card color selection:
-  - [ ] Create color wheel display
+  - [ ] Automatic turn end after playing last card
+- [ ] Implement special card interactions:
+  - [ ] Create color wheel display for Wild cards
   - [ ] Implement color choice handling
-- [ ] Add feedback for invalid moves
-- [ ] Test all gameplay interactions
+  - [ ] Handle consecutive plays after Skip/Reverse
+  - [ ] Manage Draw Two and Wild Draw Four effects
+  - [ ] Validate Wild Draw Four plays (no matching color rule)
+- [ ] Add player feedback:
+  - [ ] Visual/audio cues for invalid moves
+  - [ ] Highlight current player's turn
+  - [ ] Countdown timer for UNO call
+  - [ ] Animation for card draws and plays
+  - [ ] Notification for opponent actions
+- [ ] Test all gameplay interactions:
+  - [ ] Test standard card plays
+  - [ ] Test all special card effects
+  - [ ] Test UNO call mechanic
+  - [ ] Test appropriate feedback for all actions
 
 ### Results Screen
 - [ ] Implement ResultsScreen struct:
@@ -228,19 +338,34 @@
 
 ### Network Protocol
 - [ ] Create net/protocol.go file:
-  - [ ] Define message types for all game actions
+  - [ ] Define message types for all UNO game actions
   - [ ] Create message structures for data payloads
   - [ ] Implement serialization functions
   - [ ] Add message validation
-- [ ] Implement protocol for:
+- [ ] Implement protocol for standard UNO actions:
   - [ ] Player joining/leaving
+  - [ ] Game start/initialization
   - [ ] Card playing
   - [ ] Drawing cards
   - [ ] Calling UNO
   - [ ] Ending turns
-  - [ ] Selecting colors
+  - [ ] Selecting colors for Wild cards
+- [ ] Implement protocol for special cases:
+  - [ ] Wild Draw Four challenge (optional rule)
+  - [ ] Penalty for missed UNO call
+  - [ ] Consecutive plays after Skip/Reverse
   - [ ] Game state synchronization
-- [ ] Test protocol serialization and validation
+  - [ ] Player timeout handling
+- [ ] Implement security features:
+  - [ ] Action validation (ensure only valid moves are allowed)
+  - [ ] Turn validation (ensure players act only on their turn)
+  - [ ] State validation (prevent inconsistencies)
+  - [ ] Anti-cheat measures (server authority for rules)
+- [ ] Test protocol:
+  - [ ] Test serialization/deserialization
+  - [ ] Test message validation
+  - [ ] Test handling of all game actions
+  - [ ] Test error cases and edge conditions
 
 ### LAN Discovery
 - [ ] Create net/discovery.go file:
