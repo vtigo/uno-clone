@@ -23,10 +23,10 @@
 - [X] Set up basic main.go with Ebiten game loop
 
 ### Card and Deck Implementation
-- [ ] Define Card struct and related types in game/card.go:
-  - [ ] CardColor enum (Red, Blue, Green, Yellow, Wild)
-  - [ ] CardType enum (Number, Skip, Reverse, DrawTwo, WildCard, WildDrawFour)
-  - [ ] Card struct with Color, Type, and Value fields
+- [X] Define Card struct and related types in game/card.go:
+  - [X] CardColor enum (Red, Blue, Green, Yellow, Wild)
+  - [X] CardType enum (Number, Skip, Reverse, DrawTwo, WildCard, WildDrawFour)
+  - [X] Card struct with Color, Type, and Value fields
 - [ ] Implement deck management functions:
   - [ ] CreateDeck function that generates all 108 cards
   - [ ] Shuffle function to randomize deck
