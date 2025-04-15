@@ -8,7 +8,7 @@
 - [X] Add all required dependencies
 - [ ] Create empty placeholder files for all modules
 - [X] Create minimal main.go that imports Ebiten
-- [ ] Set up basic test file to verify testing works
+- [X] Set up basic test file to verify testing works
 
 ### Step 2: Card Type Implementation
 - [X] Define CardColor enum (Red, Blue, Green, Yellow, Wild)
@@ -23,21 +23,20 @@
 - [X] Create Deck type to represent collection of Cards
 - [X] Implement NewDeck() to create standard 108-card UNO deck
 - [X] Add Shuffle() method with Fisher-Yates algorithm
-- [ ] Create Draw() and DrawN() methods for card drawing
-- [ ] Implement Reset() to restore deck to original state
-- [ ] Add AddToBottom() method for returning cards to deck
-- [ ] Implement function for creating discard pile
-- [ ] Write tests for deck creation, shuffling, drawing, etc.
+- [X] Create Draw() and DrawN() methods for card drawing
+- [X] Add AddToBottom() method for returning cards to deck
+- [X] Implement function for creating discard pile
+- [X] Write tests for deck creation, shuffling, drawing, etc.
 
 ### Step 4: Player Implementation
-- [ ] Define Player struct (Name, Hand, HasCalledUno, IsMyTurn)
-- [ ] Implement NewPlayer() to create player with name
-- [ ] Create functions to add cards to hand
-- [ ] Implement card removal from hand
-- [ ] Add HasValidPlay() to check for valid moves
-- [ ] Create functions for hand size and win condition checking
-- [ ] Implement UNO call mechanics
-- [ ] Write unit tests for all player functionality
+- [X] Define Player struct (Name, Hand, HasCalledUno, IsMyTurn)
+- [X] Implement NewPlayer() to create player with name
+- [X] Create functions to add cards to hand
+- [X] Implement card removal from hand
+- [X] Add HasValidPlay() to check for valid moves
+- [X] Create functions for hand size and win condition checking
+- [X] Implement UNO call mechanics
+- [X] Write unit tests for all player functionality
 
 ### Step 5: Game Rules Implementation
 - [ ] Create GameRules struct for rule logic
