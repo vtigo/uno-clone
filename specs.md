@@ -4,11 +4,42 @@
 This specification outlines the development of a two-player UNO card game clone implemented in Go using the Ebiten game engine. The game will feature a graphical user interface with pixel art style, networked multiplayer over LAN, and will follow the special rules for two-player UNO.
 
 ## Game Rules
-### Two-Player UNO Rules
-1. Playing a Reverse card acts like a Skip. The player who plays the Reverse may immediately play another card.
-2. The person playing a Skip card may immediately play another card.
-3. When one person plays a Draw Two card and the other player has drawn the 2 cards, the play is back to the first person. The same principle applies to the Wild Draw Four card.
-4. The usual UNO card game rules apply in all other instances.
+### UNO Rules for Two Players
+This implementation is specifically designed for two players, with rules adapted accordingly:
+
+1. **Game Setup**
+   - Each player is dealt 7 cards.
+   - The remaining cards are placed face down to form the draw pile.
+   - The top card from the draw pile is turned over to start the discard pile.
+   - If the first card is an action card or Wild card, it takes effect immediately:
+     - Skip or Reverse: The player who goes first gets another turn
+     - Draw Two/Wild Draw Four: The second player draws cards and play returns to first player
+     - Wild: First player chooses the starting color
+
+2. **Game Play**
+   - Players take turns playing cards.
+   - On a player's turn, they must do one of the following:
+     - Play a card that matches the top card of the discard pile in color, number, or symbol
+     - Play a Wild or Wild Draw Four card (which can be played at any time)
+     - Draw a card from the draw pile
+   - After drawing a card, the player can either play that card (if valid) or keep it and end their turn.
+
+3. **Card Types and Actions**
+   - **Number Cards (0-9)**: Simply played to match color or number.
+   - **Skip Card**: The other player's turn is skipped, and the player who played the Skip card plays again immediately.
+   - **Reverse Card**: Acts like a Skip in two-player mode. The player who plays the Reverse may immediately play another card.
+   - **Draw Two Card**: The other player must draw two cards and forfeit their turn. The player who played the Draw Two gets another turn.
+   - **Wild Card**: Allows the player to change the current color being played.
+   - **Wild Draw Four Card**: Allows the player to change the current color and forces the other player to draw four cards and forfeit their turn. The player who played the Wild Draw Four gets another turn.
+
+4. **Calling "UNO"**
+   - A player must call "UNO" when they have only one card left.
+   - If they don't call "UNO" before their second-to-last card touches the discard pile and the other player catches them, they must draw two cards as a penalty.
+   - A player can call out the other player for not saying "UNO" until the other player begins their turn.
+
+5. **Winning the Game**
+   - The first player to play all their cards wins the round.
+   - The game displays the winner's name and the number of cards left in the opponent's hand.
 
 ## Architecture
 ### Technology Stack
