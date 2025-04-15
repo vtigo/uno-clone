@@ -27,11 +27,11 @@
   - [X] CardColor enum (Red, Blue, Green, Yellow, Wild)
   - [X] CardType enum (Number, Skip, Reverse, DrawTwo, WildCard, WildDrawFour)
   - [X] Card struct with Color, Type, and Value fields
-- [ ] Implement deck management functions:
-  - [ ] CreateDeck function that generates all 108 cards
-  - [ ] Shuffle function to randomize deck
-  - [ ] DrawCard function to take cards from the deck
-- [ ] Write unit tests for card and deck functionality
+- [X] Implement deck management functions:
+  - [X] CreateDeck function that generates all 108 cards
+  - [X] Shuffle function to randomize deck
+  - [X] DrawCard function to take cards from the deck
+- [X] Write unit tests for card and deck functionality
 
 ### Player Implementation
 - [ ] Create Player struct in game/player.go:
