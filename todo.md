@@ -10,16 +10,16 @@
   - [X] Create `net/` directory for network components
   - [X] Create `audio/` directory for sound management
 - [X] Initialize Go module (`go mod init`)
-- [ ] Add required dependencies:
+- [X] Add required dependencies:
   - [X] github.com/hajimehoshi/ebiten/v2
-  - [ ] github.com/hajimehoshi/ebiten/v2/audio
-  - [ ] github.com/hajimehoshi/ebiten/v2/ebitenutil
-  - [ ] github.com/hajimehoshi/ebiten/v2/inpututil
-  - [ ] github.com/hajimehoshi/ebiten/v2/text
-  - [ ] golang.org/x/image/font
-  - [ ] github.com/golang/freetype/truetype
-  - [ ] github.com/gorilla/websocket
-- [ ] Create config.go file with game constants
+  - [X] github.com/hajimehoshi/ebiten/v2/audio
+  - [X] github.com/hajimehoshi/ebiten/v2/ebitenutil
+  - [X] github.com/hajimehoshi/ebiten/v2/inpututil
+  - [X] github.com/hajimehoshi/ebiten/v2/text
+  - [X] golang.org/x/image/font
+  - [X] github.com/golang/freetype/truetype
+  - [X] github.com/gorilla/websocket
+- [X] Create config.go file with game constants
 - [X] Set up basic main.go with Ebiten game loop
 
 ### Card and Deck Implementation
