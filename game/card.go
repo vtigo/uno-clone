@@ -77,6 +77,47 @@ func (c Card) String() string {
 	return c.Color.String() + " " + c.Type.String()
 }
 
+func (c Card) CanPlayOn(topCard Card, activeColor CardColor) bool {
+	// Wild cards and Wild Draw Four cards can always be played
+	if c.Color == Wild {
+		return true
+	}
+	
+	// If the top card is a Wild card, we need to check against the active color
+	if topCard.Color == Wild {
+		return c.Color == activeColor
+	}
+	
+	// Check if the colors match
+	if c.Color == topCard.Color {
+		return true
+	}
+	
+	// Check if the types match for action cards (Skip, Reverse, Draw Two)
+	// but only for the SAME action card type
+	if c.Type == topCard.Type && c.Type != Number {
+		return true
+	}
+	
+	// Check if the values match for number cards
+	if c.Type == Number && topCard.Type == Number && c.Value == topCard.Value {
+		return true
+	}
+	
+	// No match found
+	return false
+}
+
+func IsWildDrawFourValid(hand []*Card, activeColor CardColor) bool {
+	for _, card := range hand {
+		if card.Color == activeColor {
+			return false
+		}
+	}
+
+	return true
+}
+
 func CreateDeck() *Deck {
 	deck := &Deck{Cards: make([]Card, 0, 108)}
 
