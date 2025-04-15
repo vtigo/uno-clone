@@ -1,4 +1,4 @@
-# Uno Clone
+# Uno Clone - Under Construction
 
 A two-player networked implementation of the classic UNO card game built with Go and Ebiten.
 
