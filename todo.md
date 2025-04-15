@@ -23,11 +23,11 @@
 - [X] Set up basic main.go with Ebiten game loop
 
 ### Card and Deck Implementation
-- [ ] Define Card struct and related types in game/card.go:
+- [X] Define Card struct and related types in game/card.go:
   - [X] CardColor enum (Red, Blue, Green, Yellow, Wild)
   - [X] CardType enum (Number, Skip, Reverse, DrawTwo, WildCard, WildDrawFour)
   - [X] Card struct with Color, Type, and Value fields
-  - [ ] Methods for card comparison and matching (according to UNO rules)
+  - [X] Methods for card comparison and matching (according to UNO rules)
   - [X] String/display formatting methods for cards
 - [ ] Implement standard UNO deck management:
   - [X] CreateDeck function that generates all 108 cards with proper distribution:
@@ -43,12 +43,12 @@
   - [X] Shuffle function using Fisher-Yates algorithm
   - [X] DrawCard function to take cards from the top of the deck
   - [ ] Reshuffle function to reuse discarded cards when deck is empty
-- [ ] Write comprehensive unit tests:
+- [X] Write comprehensive unit tests:
   - [X] Test card creation and properties
   - [X] Test deck generation (correct number and distribution of cards)
   - [X] Test shuffle randomness
   - [X] Test draw functionality
-  - [ ] Test card matching rules
+  - [X] Test card matching rules
 
 ### Player Implementation
 - [ ] Create Player struct in game/player.go:
