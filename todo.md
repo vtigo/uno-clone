@@ -34,17 +34,17 @@
 - [X] Write unit tests for card and deck functionality
 
 ### Player Implementation
-- [ ] Create Player struct in game/player.go:
-  - [ ] Name field (string)
-  - [ ] Hand field (slice of Card pointers)
-  - [ ] Any additional player state fields
-- [ ] Implement player methods:
-  - [ ] NewPlayer function to create player with name
-  - [ ] AddCard method to add cards to hand
-  - [ ] PlayCard method to remove/play cards from hand
-  - [ ] HasWon method to check for win condition (no cards)
-  - [ ] ShouldCallUno method to check if player has one card
-- [ ] Write unit tests for player functionality
+- [X] Create Player struct in game/player.go:
+  - [X] Name field (string)
+  - [X] Hand field (slice of Card pointers)
+  - [X] Any additional player state fields
+- [X] Implement player methods:
+  - [X] NewPlayer function to create player with name
+  - [X] AddCard method to add cards to hand
+  - [X] PlayCard method to remove/play cards from hand
+  - [X] HasWon method to check for win condition (no cards)
+  - [X] ShouldCallUno method to check if player has one card
+- [X] Write unit tests for player functionality
 
 ### Game State Management
 - [ ] Create GameState struct in game/state.go:
