@@ -3,26 +3,26 @@
 ## Phase 1: Project Setup and Core Domain Models
 
 ### Step 1: Project Initialization
-- [ ] Create directory structure (uno/, assets/, game/, ui/, net/)
-- [ ] Initialize Go module with `go mod init uno`
-- [ ] Add all required dependencies
+- [X] Create directory structure (uno/, assets/, game/, ui/, net/)
+- [X] Initialize Go module with `go mod init uno`
+- [X] Add all required dependencies
 - [ ] Create empty placeholder files for all modules
-- [ ] Create minimal main.go that imports Ebiten
+- [X] Create minimal main.go that imports Ebiten
 - [ ] Set up basic test file to verify testing works
 
 ### Step 2: Card Type Implementation
-- [ ] Define CardColor enum (Red, Blue, Green, Yellow, Wild)
-- [ ] Define CardType enum (Number, Skip, Reverse, DrawTwo, WildCard, WildDrawFour)
-- [ ] Implement Card struct with fields (Color, Type, Value)
-- [ ] Add String() method for Card
+- [X] Define CardColor enum (Red, Blue, Green, Yellow, Wild)
+- [X] Define CardType enum (Number, Skip, Reverse, DrawTwo, WildCard, WildDrawFour)
+- [X] Implement Card struct with fields (Color, Type, Value)
+- [X] Add String() method for Card
 - [ ] Implement function to get card display name
-- [ ] Create IsPlayable() function to check card play validity
-- [ ] Write comprehensive unit tests for card functionality
+- [X] Create IsPlayable() function to check card play validity
+- [X] Write comprehensive unit tests for card functionality
 
 ### Step 3: Deck Implementation
-- [ ] Create Deck type to represent collection of Cards
-- [ ] Implement NewDeck() to create standard 108-card UNO deck
-- [ ] Add Shuffle() method with Fisher-Yates algorithm
+- [X] Create Deck type to represent collection of Cards
+- [X] Implement NewDeck() to create standard 108-card UNO deck
+- [X] Add Shuffle() method with Fisher-Yates algorithm
 - [ ] Create Draw() and DrawN() methods for card drawing
 - [ ] Implement Reset() to restore deck to original state
 - [ ] Add AddToBottom() method for returning cards to deck
