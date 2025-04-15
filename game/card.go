@@ -1,8 +1,10 @@
 package game
 
 import (
-	"math/rand"
-	"time"
+	"crypto/rand"
+	"errors"
+	"math/big"
+	"sync"
 )
 
 type CardColor int
@@ -24,14 +26,17 @@ const (
 	WildDrawFour
 )
 
-type Card struct{
+// Card represents a UNO card with a color, type, and value
+type Card struct {
 	Color	CardColor
 	Type	CardType
 	Value 	int // Only used for number cards (0-9)
 }
 
-type Deck struct{
+// Deck represents a collection of UNO cards with thread-safe operations
+type Deck struct {
 	Cards []Card
+	mu    sync.Mutex // Mutex for thread-safe operations
 }
 
 func (c CardColor) String() string {
@@ -118,17 +123,22 @@ func IsWildDrawFourValid(hand []*Card, activeColor CardColor) bool {
 	return true
 }
 
-func CreateDeck() *Deck {
+// NewDeck creates a new standard 108-card UNO deck
+func NewDeck() *Deck {
 	deck := &Deck{Cards: make([]Card, 0, 108)}
-
+	
+	// Add number cards (0-9) for each color
 	for color := Red; color <= Yellow; color++ {
+		// Add one 0 card for each color
 		deck.Cards = append(deck.Cards, Card{Color: color, Type: Number, Value: 0})
 
+		// Add two of each number 1-9 for each color
 		for i := 1; i <= 9; i++ {
 			deck.Cards = append(deck.Cards, Card{Color: color, Type: Number, Value: i})
 			deck.Cards = append(deck.Cards, Card{Color: color, Type: Number, Value: i})
 		}
 
+		// Add two of each action card (Skip, Reverse, Draw Two) for each color
 		for range 2 {
 			deck.Cards = append(deck.Cards, Card{Color: color, Type: Skip})
 			deck.Cards = append(deck.Cards, Card{Color: color, Type: Reverse})
@@ -136,6 +146,7 @@ func CreateDeck() *Deck {
 		}
 	}
 
+	// Add Wild cards and Wild Draw Four cards
 	for range 4 {
 		deck.Cards = append(deck.Cards, Card{Color: Wild, Type: WildCard})
 		deck.Cards = append(deck.Cards, Card{Color: Wild, Type: WildDrawFour})
@@ -144,27 +155,91 @@ func CreateDeck() *Deck {
 	return deck
 }
 
+// Shuffle randomizes the order of cards in the deck using a cryptographically secure random source
 func (d *Deck) Shuffle() {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	d.mu.Lock()
+	defer d.mu.Unlock()
 	
-	// Fisher-Yates shuffle algorithm
+	// Fisher-Yates shuffle algorithm with crypto/rand
 	for i := len(d.Cards) - 1; i > 0; i-- {
-		j := r.Intn(i + 1)
-		d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i]
+		// Generate a secure random number
+		nBig, err := rand.Int(rand.Reader, big.NewInt(int64(i+1)))
+		if err != nil {
+			// If crypto/rand fails, skip this iteration
+			continue
+		}
+		
+		j := nBig.Int64()
+		d.Cards[i], d.Cards[int(j)] = d.Cards[int(j)], d.Cards[i]
 	}
 }
 
-func (d *Deck) DrawCard() *Card {
+// Draw removes and returns the top card from the deck
+func (d *Deck) Draw() (Card, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	
 	if len(d.Cards) == 0 {
-		return nil
+		return Card{}, errors.New("cannot draw from an empty deck")
 	}
-
+	
 	card := d.Cards[len(d.Cards)-1]
 	d.Cards = d.Cards[:len(d.Cards)-1]
-
-	return &card
+	
+	return card, nil
 }
 
-func (d *Deck) Count() int {
+// DrawN draws n cards from the deck
+func (d *Deck) DrawN(n int) ([]Card, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	
+	if n <= 0 {
+		return nil, errors.New("cannot draw a non-positive number of cards")
+	}
+	
+	if len(d.Cards) < n {
+		return nil, errors.New("not enough cards in deck")
+	}
+	
+	cards := make([]Card, n)
+	for i := range n {
+		cards[i] = d.Cards[len(d.Cards)-1-i]
+	}
+	
+	// Remove the drawn cards from the deck
+	d.Cards = d.Cards[:len(d.Cards)-n]
+	
+	return cards, nil
+}
+
+// AddToBottom adds a card to the bottom of the deck
+func (d *Deck) AddToBottom(card Card) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	
+	// Prepend the card to the slice
+	d.Cards = append([]Card{card}, d.Cards...)
+}
+
+// IsEmpty checks if the deck is empty
+func (d *Deck) IsEmpty() bool {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	
+	return len(d.Cards) == 0
+}
+
+// Size returns the number of cards in the deck
+func (d *Deck) Size() int {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	
 	return len(d.Cards)
+}
+
+// CreateDiscardPile creates a new discard pile with a single card
+func CreateDiscardPile(initialCard Card) *Deck {
+	discardPile := &Deck{Cards: []Card{initialCard}}
+	return discardPile
 }

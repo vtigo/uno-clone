@@ -17,7 +17,11 @@ func TestNewPlayer(t *testing.T) {
 	}
 
 	if player.HasCalledUno {
-		t.Errorf("Expected new playuer to have HasCalledUno = false")
+		t.Errorf("Expected new player to have HasCalledUno = false")
+	}
+
+	if player.IsMyTurn {
+		t.Errorf("Expected new player to have IsMyTurn = false")
 	}
 
 	if player.HasWon() {
@@ -42,7 +46,7 @@ func TestAddCard(t *testing.T) {
 	handSizeBefore := len(player.Hand)
 	player.AddCard(nil)
 
-	if(len(player.Hand) != handSizeBefore) {
+	if len(player.Hand) != handSizeBefore {
 		t.Errorf("Expected player hand size to remain %d after adding nil card, got %d", handSizeBefore, len(player.Hand))
 	}
 
@@ -63,6 +67,27 @@ func TestAddCard(t *testing.T) {
 	}
 }
 
+func TestAddCardsToHand(t *testing.T) {
+	player := NewPlayer("TestPlayer")
+	cards := []*Card{
+		{Color: Red, Type: Number, Value: 5},
+		{Color: Blue, Type: Number, Value: 7},
+		{Color: Green, Type: Skip},
+	}
+
+	player.AddCardsToHand(cards)
+
+	if len(player.Hand) != len(cards) {
+		t.Errorf("Expected hand size to be %d after adding multiple cards, got %d", len(cards), len(player.Hand))
+	}
+
+	for i, card := range cards {
+		if player.Hand[i] != card {
+			t.Errorf("Expected card at index %d to be %v, got %v", i, card, player.Hand[i])
+		}
+	}
+}
+
 func TestPlayCard(t *testing.T) {
 	player := NewPlayer("TestPlayer")
 	card1 := &Card{Color: Red, Type: Number, Value: 5}
@@ -78,9 +103,7 @@ func TestPlayCard(t *testing.T) {
 	}
 
 	if playerCard != card1 {
-		t.Errorf("Expected to play card1(c: %s, t: %s, v: %d), but got a different card(c: %s, t: %s, v: %d)",
-		CardColor(card1.Color).String(), CardType(card1.Type).String(), card1.Value,
-		CardColor(playerCard.Color).String(), CardType(playerCard.Type).String(), playerCard.Value)
+		t.Errorf("Expected to play card1, but got a different card")
 	}
 
 	if len(player.Hand) != 1 {
@@ -95,6 +118,66 @@ func TestPlayCard(t *testing.T) {
 	_, err = player.PlayCard(-1)
 	if err == nil {
 		t.Errorf("Expected error when playing a card with negative index")
+	}
+}
+
+func TestGetValidPlays(t *testing.T) {
+	player := NewPlayer("TestPlayer")
+	topCard := &Card{Color: Red, Type: Number, Value: 5}
+	currentColor := Red
+
+	// No cards in hand should return empty array
+	validPlays := player.GetValidPlays(topCard, currentColor)
+	if len(validPlays) != 0 {
+		t.Errorf("Expected 0 valid plays with empty hand, got %d", len(validPlays))
+	}
+
+	// Add cards to hand
+	redSeven := &Card{Color: Red, Type: Number, Value: 7}
+	blueFive := &Card{Color: Blue, Type: Number, Value: 5}
+	greenSkip := &Card{Color: Green, Type: Skip}
+	wildCard := &Card{Color: Wild, Type: WildCard}
+
+	player.AddCardsToHand([]*Card{redSeven, blueFive, greenSkip, wildCard})
+
+	validPlays = player.GetValidPlays(topCard, currentColor)
+	if len(validPlays) != 3 {
+		t.Errorf("Expected 3 valid plays, got %d", len(validPlays))
+	}
+
+	// Change current color to green
+	currentColor = Green
+	validPlays = player.GetValidPlays(topCard, currentColor)
+	if len(validPlays) != 2 {
+		t.Errorf("Expected 2 valid plays with green as current color, got %d", len(validPlays))
+	}
+}
+
+func TestHasValidPlay(t *testing.T) {
+	player := NewPlayer("TestPlayer")
+	topCard := &Card{Color: Red, Type: Number, Value: 5}
+	currentColor := Red
+
+	// No cards in hand should return false
+	if player.HasValidPlay(topCard, currentColor) {
+		t.Errorf("Expected HasValidPlay to be false with empty hand")
+	}
+
+	// Add cards with no valid plays
+	blueSkip := &Card{Color: Blue, Type: Skip}
+	greenSkip := &Card{Color: Green, Type: Skip}
+	player.AddCardsToHand([]*Card{blueSkip, greenSkip})
+
+	if player.HasValidPlay(topCard, currentColor) {
+		t.Errorf("Expected HasValidPlay to be false with no matching cards")
+	}
+
+	// Add a wild card which is always valid
+	wildCard := &Card{Color: Wild, Type: WildCard}
+	player.AddCard(wildCard)
+
+	if !player.HasValidPlay(topCard, currentColor) {
+		t.Errorf("Expected HasValidPlay to be true after adding wild card")
 	}
 }
 
@@ -114,7 +197,7 @@ func TestHasWon(t *testing.T) {
 	player.Hand = []*Card{}
 
 	if player.HasWon() {
-		t.Errorf("Expcted player with empty hand but who never played ant cards to have HasWon = false")
+		t.Errorf("Expected player with empty hand but who never played any cards to have HasWon = false")
 	}
 
 	player.AddCard(&Card{Color: Yellow, Type: Number, Value: 6})
@@ -152,7 +235,7 @@ func TestShouldCallUno(t *testing.T) {
 	}
 }
 
-func TestCallUno(t * testing.T) {
+func TestCallUno(t *testing.T) {
 	player := NewPlayer("Test Player")
 
 	if player.HasCalledUno {
@@ -163,5 +246,28 @@ func TestCallUno(t * testing.T) {
 
 	if !player.HasCalledUno {
 		t.Errorf("Expected player to have HasCalledUno = true after calling uno")
+	}
+
+	player.ResetUnoCall()
+
+	if player.HasCalledUno {
+		t.Errorf("Expected player to have HasCalledUno = false after reset")
+	}
+}
+
+func TestString(t *testing.T) {
+	player := NewPlayer("TestPlayer")
+	expected := "Player TestPlayer (0 cards) | Uno(false)"
+	
+	if player.String() != expected {
+		t.Errorf("Expected string representation to be '%s', got '%s'", expected, player.String())
+	}
+
+	player.AddCard(&Card{Color: Red, Type: Number, Value: 5})
+	player.CallUno()
+	
+	expected = "Player TestPlayer (1 cards) | Uno(true)"
+	if player.String() != expected {
+		t.Errorf("Expected string representation to be '%s', got '%s'", expected, player.String())
 	}
 }
