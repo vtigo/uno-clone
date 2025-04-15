@@ -3,15 +3,15 @@
 ## Phase 1: Project Setup and Core Components
 
 ### Project Initialization
-- [ ] Create directory structure according to specs:
-  - [ ] Create `assets/` directory (with subdirectories for images, audio, fonts)
-  - [ ] Create `game/` directory for game logic
-  - [ ] Create `ui/` directory for UI components
-  - [ ] Create `net/` directory for network components
-  - [ ] Create `audio/` directory for sound management
-- [ ] Initialize Go module (`go mod init`)
+- [X] Create directory structure according to specs:
+  - [X] Create `assets/` directory (with subdirectories for images, audio, fonts)
+  - [X] Create `game/` directory for game logic
+  - [X] Create `ui/` directory for UI components
+  - [X] Create `net/` directory for network components
+  - [X] Create `audio/` directory for sound management
+- [X] Initialize Go module (`go mod init`)
 - [ ] Add required dependencies:
-  - [ ] github.com/hajimehoshi/ebiten/v2
+  - [X] github.com/hajimehoshi/ebiten/v2
   - [ ] github.com/hajimehoshi/ebiten/v2/audio
   - [ ] github.com/hajimehoshi/ebiten/v2/ebitenutil
   - [ ] github.com/hajimehoshi/ebiten/v2/inpututil
@@ -20,7 +20,7 @@
   - [ ] github.com/golang/freetype/truetype
   - [ ] github.com/gorilla/websocket
 - [ ] Create config.go file with game constants
-- [ ] Set up basic main.go with Ebiten game loop
+- [X] Set up basic main.go with Ebiten game loop
 
 ### Card and Deck Implementation
 - [ ] Define Card struct and related types in game/card.go:
