@@ -119,3 +119,132 @@ func NewGameState(players []*Player) (*GameState, error) {
 
 	return state, nil
 }
+
+func (gr *GameRules) ValidateMove(player *Player, cardIndex int, state *GameState) (bool, string) {
+	if !player.IsMyTurn {
+		return false, "It's not your turn"
+	}
+
+	if cardIndex < 0 || cardIndex >= len(player.Hand) {
+		return false, "Invalid card index"
+	} 
+
+	if state.Phase != PhasePlay {
+		return false, "Game is not in the play phase"
+	}
+
+	card := player.Hand[cardIndex]
+
+	if len(state.DiscardPile.Cards) == 0 {
+		return false, "Discard pile is empty"
+	}
+
+	topCard := state.DiscardPile.Cards[len(state.DiscardPile.Cards)-1]
+
+	if !card.CanPlayOn(topCard, state.ActiveColor) {
+		return false, "Card cannot be played on top of the current discard pile"
+	}
+
+	if card.Color == Wild && card.Type == WildDrawFour {
+		if !IsWildDrawFourValid(player.Hand, state.ActiveColor) {
+			return false, "Wild Draw Four can only be played if you don't have any cards of the active color"
+		}
+	}
+
+	return true, ""
+}
+
+func (gr *GameRules) HandleCardEffect(card *Card, state *GameState, chosenColor *CardColor) error {
+	if state.Phase != PhasePlay && state.Phase != PhaseColorSelection {
+		return errors.New("game is not in the play or color selection phase")
+	}
+
+	switch card.Type {
+	case Number:
+		return gr.handleNumberCard(state)
+	case Skip:
+		return gr.handleSkipCard(state)
+	case Reverse:
+		return gr.handleReverseCard(state)
+	case DrawTwo:
+		return gr.handleDrawTwoCard(state)
+	case WildCard:
+		if chosenColor == nil {
+			state.Phase = PhaseColorSelection
+			return nil
+		}
+		// return gr.handleWildCard(card, state, *chosenColor)
+	case WildDrawFour:
+		if chosenColor == nil {
+			state.Phase = PhaseColorSelection
+			return nil
+		}
+		// return gr.handleWildDrawFourCard(card, state, *chosenColor)
+	default:
+		return fmt.Errorf("unknown card type: %v", card.Type)
+	}
+	return nil
+}
+
+func (gr *GameRules) handleNumberCard(state *GameState) error {
+	// Number cards have no special effects
+	gr.NextTurn(state)
+	return nil
+}
+
+func (gr *GameRules) handleSkipCard(state *GameState) error {
+	gr.SkipTurn(state)
+	return nil
+}
+
+func (gr *GameRules) handleReverseCard(state *GameState) error {
+	gr.ReverseTurn(state)
+	return nil
+}
+
+func (gr *GameRules) handleDrawTwoCard(state *GameState) error {
+	playerToDraw := (state.CurrentPlayer + 1) % len(state.Players)
+
+	cardsDrawn, err := state.DrawPile.DrawN(2)
+	if err != nil {
+		if err.Error() == "not enough cards in deck" {
+			// TODO: If there are cards in the discard pile, shuffle them into the draw pile
+			// Keep the top card in the discard pile
+			// Add the cards from the discard pile to the draw pile
+			// Shuffle the draw pile
+			// Try to draw again
+		} else {
+			return fmt.Errorf("failed to draw cards: %v", err)
+		}
+	}
+
+	cardPtrs := make([]*Card, len(cardsDrawn))
+	for i:= range cardPtrs {
+		cardPtrs[i] = &cardsDrawn[i]
+	}
+	state.Players[playerToDraw].AddCardsToHand(cardPtrs)
+	
+	gr.SkipTurn(state)
+	return nil
+}
+
+func (gr *GameRules) NextTurn(state *GameState) {
+	state.Players[state.CurrentPlayer].IsMyTurn = false
+	state.CurrentPlayer = (state.CurrentPlayer + 1) % len(state.Players)
+	state.Players[state.CurrentPlayer].IsMyTurn = true
+}
+
+func (gr *GameRules) SkipTurn(state *GameState) {
+	// In a two player game, skipping means staying with the same current player
+	// Can be implemented in the future to handle more than two players
+}
+
+func (gr *GameRules) RepeatTurn(state *GameState) {
+	// In a two player game, repeating means staying with the same current player
+	// Can be implemented in the future to handle more than two players
+}
+
+func (gr *GameRules) ReverseTurn(state *GameState) {
+	// In a two player game, reversing means staying with the same current player
+	// Can be implemented in the future to handle more than two players
+}
