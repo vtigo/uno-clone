@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"errors"
 	"math/big"
-	"sync"
 )
 
 type CardColor int
@@ -36,7 +35,6 @@ type Card struct {
 // Deck represents a collection of UNO cards with thread-safe operations
 type Deck struct {
 	Cards []Card
-	mu    sync.Mutex // Mutex for thread-safe operations
 }
 
 func (c CardColor) String() string {
@@ -157,9 +155,6 @@ func NewDeck() *Deck {
 
 // Shuffle randomizes the order of cards in the deck using a cryptographically secure random source
 func (d *Deck) Shuffle() {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	
 	// Fisher-Yates shuffle algorithm with crypto/rand
 	for i := len(d.Cards) - 1; i > 0; i-- {
 		// Generate a secure random number
@@ -176,9 +171,6 @@ func (d *Deck) Shuffle() {
 
 // Draw removes and returns the top card from the deck
 func (d *Deck) Draw() (Card, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	
 	if len(d.Cards) == 0 {
 		return Card{}, errors.New("cannot draw from an empty deck")
 	}
@@ -191,9 +183,6 @@ func (d *Deck) Draw() (Card, error) {
 
 // DrawN draws n cards from the deck
 func (d *Deck) DrawN(n int) ([]Card, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	
 	if n <= 0 {
 		return nil, errors.New("cannot draw a non-positive number of cards")
 	}
@@ -215,26 +204,17 @@ func (d *Deck) DrawN(n int) ([]Card, error) {
 
 // AddToBottom adds a card to the bottom of the deck
 func (d *Deck) AddToBottom(card Card) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	
 	// Prepend the card to the slice
 	d.Cards = append([]Card{card}, d.Cards...)
 }
 
 // IsEmpty checks if the deck is empty
 func (d *Deck) IsEmpty() bool {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	
 	return len(d.Cards) == 0
 }
 
 // Size returns the number of cards in the deck
 func (d *Deck) Size() int {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	
 	return len(d.Cards)
 }
 
