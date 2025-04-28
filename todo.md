@@ -6,7 +6,6 @@
 - [X] Create directory structure (uno/, assets/, game/, ui/, net/)
 - [X] Initialize Go module with `go mod init uno`
 - [X] Add all required dependencies
-- [ ] Create empty placeholder files for all modules
 - [X] Create minimal main.go that imports Ebiten
 - [X] Set up basic test file to verify testing works
 
@@ -39,25 +38,25 @@
 - [X] Write unit tests for all player functionality
 
 ### Step 5: Game Rules Implementation
-- [ ] Create GameRules struct for rule logic
-- [ ] Implement handlers for each card type effect
-- [ ] Create move validation function
-- [ ] Implement UNO call validation and penalties
-- [ ] Add turn progression specific to two-player rules
-- [ ] Write tests for all rule implementations
-- [ ] Verify rules match the two-player UNO specification
+- [X] Create GameRules struct for rule logic
+- [X] Implement handlers for each card type effect
+- [X] Create move validation function
+- [X] Implement UNO call validation and penalties
+- [X] Add turn progression specific to two-player rules
+- [X] Write tests for all rule implementations
+- [X] Verify rules match the two-player UNO specification
 
 ### Step 6: Game State Implementation
-- [ ] Define GamePhase enum (Setup, Play, ColorSelection, GameOver)
-- [ ] Create GameState struct with all required fields
-- [ ] Implement game initialization and setup
-- [ ] Add card playing functionality
-- [ ] Create card drawing functionality
-- [ ] Implement turn management
-- [ ] Add game over condition checking
-- [ ] Implement UNO call and challenge mechanics
-- [ ] Create state serialization for future networking
-- [ ] Write comprehensive tests for all state management
+- [X] Define GamePhase enum (Setup, Play, ColorSelection, GameOver)
+- [X] Create GameState struct with all required fields
+- [X] Implement game initialization and setup
+- [X] Add card playing functionality
+- [X] Create card drawing functionality
+- [X] Implement turn management
+- [X] Add game over condition checking
+- [X] Implement UNO call and challenge mechanics
+- [X] Create state serialization for future networking
+- [X] Write comprehensive tests for all state management
 
 ## Phase 2: Basic Rendering and UI
 
