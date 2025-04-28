@@ -350,3 +350,86 @@ func (gr *GameRules) HandleUnoChallenge(targetIndex int, state *GameState) (bool
 
 	return true, "Challenge successfull! Target has drawn 2 cards"
 }
+
+func (gr *GameRules) PlayCard(player *Player, cardIndex int, state *GameState, chosenColor *CardColor) error {
+	valid, message := gr.ValidateMove(player, cardIndex, state)
+	if(!valid) {
+		return errors.New(message)
+	}
+
+	card, err := player.PlayCard(cardIndex)
+	if err != nil {
+		return fmt.Errorf("failed to play card: %v", err)
+	}
+
+	state.DiscardPile.AddToBottom(*card)
+
+	state.LastPlayedBy = state.CurrentPlayer
+
+	if chosenColor != nil || card.Color != Wild {
+		err = gr.HandleCardEffect(card, state, chosenColor)
+		if err != nil {
+			return fmt.Errorf("failed to handle card effect: %v", err)
+		}
+	} else {
+		state.Phase = PhaseColorSelection
+	}
+
+	if player.HasWon() {
+		state.Phase = PhaseGameOver
+	}
+
+	return nil
+}
+
+func (gr *GameRules) DrawCard(player *Player, state *GameState) error {
+	if !player.IsMyTurn {
+		return errors.New("it is not your turn")
+	}
+
+	if state.Phase != PhasePlay {
+		return errors.New("game is not in the play phase")
+	}
+
+	card, err := state.DrawPile.Draw()
+	if err != nil {
+		// Handle the case where there aren't enough cards in the draw pile
+		if err.Error() == "cannot draw from an empty deck" {
+			// If there are cards in the discard pile, shuffle them into the draw pile
+			if len(state.DiscardPile.Cards) > 1 { // Keep the top card in the discard pile
+				topCard := state.DiscardPile.Cards[len(state.DiscardPile.Cards)-1]
+				state.DiscardPile.Cards = state.DiscardPile.Cards[:len(state.DiscardPile.Cards)-1]
+
+				// Add the cards from the discard pile to the draw pile
+				state.DrawPile.Cards = append(state.DrawPile.Cards, state.DiscardPile.Cards...)
+				state.DiscardPile.Cards = []Card{topCard}
+
+				// Shuffle the draw pile
+				state.DrawPile.Shuffle()
+
+				// Try to draw again
+				card, err = state.DrawPile.Draw()
+				if err != nil {
+					return fmt.Errorf("failed to draw card after reshuffling: %v", err)
+				}
+			} else {
+				// Not enough cards even after reshuffling
+				return errors.New("no more cards to draw")
+			}
+		} else {
+			return fmt.Errorf("failed to draw card: %v", err)
+		}
+	}
+
+	player.AddCard(&card)
+	return nil
+}
+
+func (gr *GameRules) EndTurn(state *GameState) error {
+	if state.Phase != PhasePlay {
+		return errors.New("game phase is not play phase")
+	}
+
+	gr.NextTurn(state)
+	return nil
+}
