@@ -39,12 +39,14 @@ func NewGameState(players []*Player) (*GameState, error) {
 		Players:       players,
 		CurrentPlayer: 0,
 		Phase:         PhaseSetup,
-		LastPlayedBy:  -1,
+		LastPlayedBy:  -1, // Nobody played yet
 	}
-
+	
+	// Create and shuffle deck
 	deck := NewDeck()
 	deck.Shuffle()
-
+	
+	// Draw initial hands
 	for _, player := range players {
 		cards, err := deck.DrawN(7)
 		if err != nil {
@@ -57,21 +59,25 @@ func NewGameState(players []*Player) (*GameState, error) {
 		}
 		player.AddCardsToHand(cardPtrs)
 	}
-
+	
+	// Draw initial card
 	initialCard, err := deck.Draw()
 	if err != nil {
 		return nil, fmt.Errorf("failed to draw initial card: %v", err)
 	}
-
+	
+	// Create the discard pile with the initial card as the first card and "put the deck on the draw pile"
 	state.DiscardPile = CreateDiscardPile(initialCard)
 	state.DrawPile = deck
-
+	
+	// Set the current color based on the initial card
 	if initialCard.Color == Wild {
 		state.ActiveColor = Red
 	} else {
 		state.ActiveColor = initialCard.Color
 	}
-
+	
+	// Handle initial card effects
 	if initialCard.Type != Number {
 		switch initialCard.Type {
 		case Skip, Reverse:
@@ -110,7 +116,8 @@ func NewGameState(players []*Player) (*GameState, error) {
 			state.Phase = PhaseColorSelection
 		}
 	}
-
+	
+	// Start play phase
 	if state.Phase != PhaseColorSelection {
 		state.Phase = PhasePlay
 	}
@@ -173,17 +180,16 @@ func (gr *GameRules) HandleCardEffect(card *Card, state *GameState, chosenColor 
 			state.Phase = PhaseColorSelection
 			return nil
 		}
-		// return gr.handleWildCard(card, state, *chosenColor)
+		return gr.handleWildCard(state, *chosenColor)
 	case WildDrawFour:
 		if chosenColor == nil {
 			state.Phase = PhaseColorSelection
 			return nil
 		}
-		// return gr.handleWildDrawFourCard(card, state, *chosenColor)
+		return gr.handleWildDrawFourCard(state, *chosenColor)
 	default:
 		return fmt.Errorf("unknown card type: %v", card.Type)
 	}
-	return nil
 }
 
 func (gr *GameRules) handleNumberCard(state *GameState) error {
@@ -224,6 +230,49 @@ func (gr *GameRules) handleDrawTwoCard(state *GameState) error {
 	}
 	state.Players[playerToDraw].AddCardsToHand(cardPtrs)
 	
+	gr.SkipTurn(state)
+	return nil
+}
+
+func (gr * GameRules) handleWildCard(state *GameState, chosenColor CardColor) error {
+	if chosenColor < Red || chosenColor > Yellow {
+		return errors.New("invalid color choice for Wild Card")
+	}
+
+	state.ActiveColor = chosenColor
+
+	gr.NextTurn(state)
+	return nil
+}
+
+func (gr *GameRules) handleWildDrawFourCard(state *GameState, chosenColor CardColor) error {
+	if chosenColor < Red || chosenColor > Yellow {
+		return errors.New("invalid color choice for Wild Draw Four Card")
+	}
+
+	state.ActiveColor = chosenColor
+
+	playerToDraw := (state.CurrentPlayer + 1) % len(state.Players)
+
+	cardsDrawn, err := state.DrawPile.DrawN(4)
+	if err != nil {
+		if err.Error() == "not enough cards in deck" {
+			// TODO: If there are cards in the discard pile, shuffle them into the draw pile
+			// Keep the top card in the discard pile
+			// Add the cards from the discard pile to the draw pile
+			// Shuffle the draw pile
+			// Try to draw again
+		} else {
+			return fmt.Errorf("failed to draw cards: %v", err)
+		}
+	}
+
+	cardPtrs := make([]*Card, len(cardsDrawn))
+	for i:= range cardsDrawn {
+		cardPtrs[i] = &cardsDrawn[i]
+	}
+
+	state.Players[playerToDraw].AddCardsToHand(cardPtrs)
 	gr.SkipTurn(state)
 	return nil
 }
