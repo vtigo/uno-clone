@@ -351,7 +351,7 @@ func (gr *GameRules) HandleUnoChallenge(targetIndex int, state *GameState) (bool
 	return true, "Challenge successfull! Target has drawn 2 cards"
 }
 
-func (gr *GameRules) PlayCard(player *Player, cardIndex int, state *GameState, chosenColor *CardColor) error {
+func (gr *GameRules) HandlePlayCard(player *Player, cardIndex int, state *GameState, chosenColor *CardColor) error {
 	valid, message := gr.ValidateMove(player, cardIndex, state)
 	if(!valid) {
 		return errors.New(message)
@@ -382,7 +382,7 @@ func (gr *GameRules) PlayCard(player *Player, cardIndex int, state *GameState, c
 	return nil
 }
 
-func (gr *GameRules) DrawCard(player *Player, state *GameState) error {
+func (gr *GameRules) HandleDrawCard(player *Player, state *GameState) error {
 	if !player.IsMyTurn {
 		return errors.New("it is not your turn")
 	}
