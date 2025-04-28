@@ -297,3 +297,56 @@ func (gr *GameRules) ReverseTurn(state *GameState) {
 	// In a two player game, reversing means staying with the same current player
 	// Can be implemented in the future to handle more than two players
 }
+
+func (gr *GameRules) HandleUnoCall(playerIndex int, state *GameState) (bool, string) {
+	if playerIndex < 0 || playerIndex >= len(state.Players) {
+		return false, "Invalid player index"
+	}
+
+	player := state.Players[playerIndex]
+
+	if !player.ShouldCallUno() {
+		return false, "Player does not have exactly one card left"
+	}
+
+	player.CallUno()
+	return true, "UNO called successfully"
+}
+
+func (gr *GameRules) HandleUnoChallenge(targetIndex int, state *GameState) (bool, string) {
+	if targetIndex < 0 || targetIndex > len(state.Players) {
+		return false, "Invalid target index"
+	}
+
+	target := state.Players[targetIndex]
+
+	if !target.ShouldCallUno() {
+		return false, "Target does not need to call uno"
+	}
+
+	if target.HasCalledUno {
+		return false, "Target allready called uno"
+	}
+
+	cardsDrawn, err := state.DrawPile.DrawN(2)
+	if err != nil {
+		if err.Error() == "not enough cards in deck" {
+			// TODO: If there are cards in the discard pile, shuffle them into the draw pile
+			// Keep the top card in the discard pile
+			// Add the cards from the discard pile to the draw pile
+			// Shuffle the draw pile
+			// Try to draw again
+		} else {
+			return false, fmt.Sprintf("failed to draw cards: %v", err) 
+		}
+	}
+
+	cardPtrs := make([]*Card, len(cardsDrawn))
+	for i := range cardsDrawn {
+		cardPtrs[i] = &cardsDrawn[i]
+	}
+
+	target.AddCardsToHand(cardPtrs)
+
+	return true, "Challenge successfull! Target has drawn 2 cards"
+}
